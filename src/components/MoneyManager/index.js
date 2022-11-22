@@ -28,8 +28,7 @@ class MoneyManager extends Component {
 
   onAdd = event => {
     event.preventDefault()
-    const {balance, income, expense, title, amount, type} = this.state
-
+    const {title, amount, type} = this.state
     const newData = {
       id: v4(),
       title,
@@ -41,13 +40,20 @@ class MoneyManager extends Component {
       transactionList: [...prevState.transactionList, newData],
       title: '',
       amount: '',
-      balance:
-        type === 'Income'
-          ? balance + parseInt(amount)
-          : balance - parseInt(amount),
-      income: type === 'Income' ? parseInt(amount) + income : income,
-      expense: type === 'Income' ? expense : expense + parseInt(amount),
     }))
+
+    if (type === 'INCOME') {
+      this.setState(prevState => ({
+        income: prevState.income + parseInt(amount),
+        balance: prevState.balance + parseInt(amount),
+      }))
+    }
+    if (type === 'Expenses') {
+      this.setState(prevState => ({
+        expense: prevState.expense + parseInt(amount),
+        balance: prevState.balance - parseInt(amount),
+      }))
+    }
   }
 
   onChangeTitle = event => {
@@ -64,8 +70,40 @@ class MoneyManager extends Component {
     this.setState({type: event.target.value})
   }
 
+  onDeleteBtnClick = id => {
+    const {transactionList} = this.state
+    const details = transactionList.filter(each => each.id === id)
+    const transcType = details[0].type
+    const transcAmount = details[0].amount
+    this.setState(prevState => ({
+      transactionList: prevState.transactionList.filter(each => each.id !== id),
+    }))
+
+    if (transcType === 'INCOME') {
+      this.setState(prevState => ({
+        balance: prevState.balance - transcAmount,
+        income: prevState.income - transcAmount,
+      }))
+    }
+    if (transcType === 'Expenses') {
+      this.setState(prevState => ({
+        balance: prevState.balance + parseInt(transcAmount),
+        expense: prevState.expense - transcAmount,
+      }))
+    }
+
+    console.log('dlt-clicked', id)
+  }
+
   render() {
-    const {transactionList, title, amount} = this.state
+    const {
+      transactionList,
+      balance,
+      income,
+      expense,
+      title,
+      amount,
+    } = this.state
 
     return (
       <div className="bg-container">
@@ -75,7 +113,7 @@ class MoneyManager extends Component {
             Welcome back to your <span>Money Manager</span>
           </p>
         </div>
-        <MoneyDetails details={transactionList} />
+        <MoneyDetails balance={balance} income={income} expense={expense} />
         <div className="bottom-section">
           <form className="form-bg" onSubmit={this.onAdd}>
             <h1 className="bottom-section-heading">Add Transaction</h1>
@@ -104,10 +142,10 @@ class MoneyManager extends Component {
             <label htmlFor="type">TYPE</label>
             <br />
             <select onChange={this.onChangeType} className="input" id="type">
-              <option value={transactionTypeOptions[0].displayText}>
+              <option value={transactionTypeOptions[0].optionId} defaultValue>
                 {transactionTypeOptions[0].displayText}
               </option>
-              <option value={transactionTypeOptions[1].displayText}>
+              <option value={transactionTypeOptions[1].optionId}>
                 {transactionTypeOptions[1].displayText}
               </option>
             </select>
@@ -125,7 +163,11 @@ class MoneyManager extends Component {
             </div>
             <ul className="list-ul">
               {transactionList.map(each => (
-                <TransactionItem key={each.id} details={each} />
+                <TransactionItem
+                  key={each.id}
+                  details={each}
+                  onDeleteBtnClick={this.onDeleteBtnClick}
+                />
               ))}
             </ul>
           </div>

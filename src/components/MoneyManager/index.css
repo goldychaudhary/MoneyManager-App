@@ -26,18 +26,19 @@ span {
 }
 .bottom-section {
   display: flex;
+  width: 100%;
 }
 .form-bg {
   border-style: solid;
   border-width: 1px;
   border-color: #cbd5e1;
-  min-width: 40%;
+  min-width: 30%;
   margin-right: 10px;
   padding: 25px;
   border-radius: 10px;
 }
 .right-div {
-  min-width: 59%;
+  min-width: 69%;
 }
 .bottom-section-heading {
   font-size: 20px;

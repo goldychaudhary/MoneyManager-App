@@ -1,5 +1,6 @@
 .list-container {
   display: flex;
+  width: 100%;
   margin: 20px 0px 20px 0px;
 }
 .balance {
@@ -35,8 +36,19 @@
   margin-top: 0px;
 }
 
-img {
-  height: 50px;
-  width: 50px;
+.b-image {
+  min-height: 50px;
+  min-width: 50px;
   margin-right: 10px;
+}
+.img-bg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 45%;
+  height: 100%;
+}
+.balance-para-content {
+  height: 100%;
+  width: 100%;
 }
